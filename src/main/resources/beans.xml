@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd">
+        https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="value.properties"/>
+    <bean id="hello3" class="bean.Hello">
+        <constructor-arg index="0" value = "${myname}"/>
+        <constructor-arg index="1" ref="${myprinter}"/>
+        <property name="names">
+            <list>
+                <value>${value1}</value>
+                <value>${value2}</value>
+                <value>${value3}</value>
+            </list>
+        </property>
+
+    </bean>
+    <bean id="hello2" class="bean.Hello">
+        <constructor-arg index="0" value = "Spring"/>
+        <constructor-arg index="1" ref="printer"/>
+        <property name="names">
+            <list>
+                <value>AOP</value>
+                <value>Spring</value>
+                <value>DI</value>
+            </list>
+        </property>
+
+    </bean>
 
     <bean id="hello" class="bean.Hello">
         <property name="name" value="Spring"/>
         <property name="printer" ref="printer"/>
+
     </bean>
 
     <bean id="printer" class="bean.StringPrinter"/>

@@ -73,3 +73,74 @@ JUnit을 확장한 프레임워크. <br>
 2. @ContextConfiguration: 스프링 빈 설정 파일의 위치를 지정할 때 사용되는 어노테이션.
 3. @Autowired: 스프링DI에서 사용되는 특별한 어노테이션. 해당 변수에 자동로 빈 매핑 해준다.
 
+## Bean 의존관계
+Bean 의존관계 설정 방법
+1. Setter Injection: \<property> 태그 사용.
+    - ref 속성 사용하면 Bean 이름을 이용해 주입할 Bean 찾는다.
+    - value 속성은 단순 값 또는 Bean이 아닌 객체 주입시 사용.
+    
+2. Constructor Injection: <constructor-arg> 태그 사용.
+    - 한번에 여러개의 객체를 주입할 수 있다.
+    - 똑같이 ref, value 사용
+    - index, name 으로 파라미터 지정
+        - name: 매개변수 명으로 지정
+    
+컬렉션 타입의 값 주입:
+1. List: \<list> , \<value>
+2. Set: \<set> , \<value>
+3. Map: \<map>, \<entry>
+
+```
+<bean id="hello" class="beans.Hello">
+    <property name="names">
+        <list>
+            <value>Spring</value>
+            <value>IoC</value>
+            <value>DI</value>
+        </list>
+    <property>
+</bean>
+```
+### 프로퍼티 파일을 이용한 설정 방법
+XML의 Bean 설정 메타정보는 애플리케이션 구조가 바뀌지 않으면 자주 변경되지 않는다. 반면에 프로퍼티 값으로 제공되는
+일부 설정정보(DB 연결정보 등)는 환경에 따라 자주 바뀔 수 있다. 따라서 자주 변경될 수 있는 내용은 properties 파일로 분리하는 것이 가장 깔끔하다.
+<br><br>
+프로퍼티 파일로 분리한 정보는 ${}을 이용하여 설정한다.
+
+##  Bean 등록 메타정보 구성 전략
+1. XML 단독 사용: 모든 Bean을 명시적으로 XML에 등록하는 방법.
+    - Bean이 많아지면 XML 관리 어려움.
+    - 운영환경에서 사용하기 좋음.
+2. XML, Bean Scanning의 혼용: Annotation을 사용.
+    - Bean Scanning: 특정 어노테이션이 붙은 클래스를 자동으로 찾아서 Bean으로 등록해주는 방식
+    - Bean들 간의 의존관계 한눈에 파악할 수 없다.
+    - 개발환경에서 적합함.
+    
+### Bean Annotations
+
+#### Bean 등록 어노테이션
+1. Component: 컴포넌트를 나타냄. \<Bean> 태그와 동일
+2. Repository: 영속성을 가지는 속성(파일, 데이터베이스)을 가진 클래스
+3. Service: 서비스 레이어. 비즈니스 로직을 가진 클래스
+4. Controller: 웹 어플리케이션에서 웹 요청과 응답을 처리하는 클래스
+
+
+#### Bean 의존관계 주입 어노테이션
+1. @Autowired: 정밀한 의존관계 주입이 필요한 경우
+    - 프로퍼티, setter, 생성자, 일반 메서드에 적용 가능.
+    - 의존하는 객체를 주입할때 주로 Type을 이용.
+    - \<property> , \<constructor-arg> 태그와 동일
+2. @Resource: 어플리케이션에서 필요로 하는 자원을 자동 연결할 때 사용된다.
+    - 프로퍼티, setter에 적용 가능.
+    - 의존하는 객체 주입할 때 주로 Name을 이용.
+3. @Value : 단순한 값을 주입할때
+4. @Qualifier: @Autowired 어노테이션과 함께 사용.
+    - 동일한 타입이 여러개 존재할때 특정 Bean 찾기 위해 사용.
+    
+##### Component scan
+@Component를 통해 자동으로 Bean 등록하고, @Autowired로 주입받는 어노테이션을 클래스에서 선언하여
+사용했을 경우 해당 클래스가 위치한 특정 패키지를 Scan하기 위한 설정해주어야 한다.
+
+- \<context:component-scan> 태그로 패키지 위치 설정.
+- \<context:include-filter> , \<context:exclude-filter> 태그를 같이 사용 시 자동 스캔 대상에
+포함시킬 클래스와 않을 클래스 구체적 명시 가능.
