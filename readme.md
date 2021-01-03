@@ -226,3 +226,88 @@ Select SQL을 실행하여 여러개 Row를 가져올 때는 JdbcTemplate의 que
 - SQL 실행 결과는 여러개의 칼럼을 가진 여러개의 Row
 - T는 VO(value object) 객체의 타입에 해당된다.
 - SQL 실행 결과로 돌아온 여러 개의 column을 가진 여 개의 Row를 RowMapper 콜백을 이용해 VO 객체로 매핑해준다.
+
+## AOP
+
+### 핵심기능과 부가기능
+1. 핵심기능: 업무 로직을 포함하는 기능
+2. 부가기능: 핵심기능을 도와주는 부가적인 기능(로깅, 보안)
+
+### AOP의 개요
+AOP는 애플리케이션에서의 관심사의 분리 이다. 분리한 부가 기능은 애스팩트라는 독특한 모듈형태로 만들어서
+설계하고 개발하는 방법이다.
+- OOP를 적용하야도 핵심기능에서 부가기능을 쉽게 분리된 모듈로 작성하기 어려운 문제점을 해결
+- 핵심기능에서 부가기능을 분리함으로써 객체지향적인 가치를 지킬 수 있도록 도와줌.
+
+### Aspect
+Aspect는 부가기능을 정의한 코드인 **어드바이스** 와 어드바이스를 어디에 적용할지를 결정하는
+**포인트컷**을 합친 개념이다.
+
+### AOP 용어
+- Target: 핵심기능을 담고 있는 모듈. 부가기능을 부여할 대상이 된다.
+- Advice: 타겟에 제공할 부가기능을 담고 있는 모듈
+- Join Point: 어드바이스가 적용될 수 있는 위치. 타겟 객체가 구현한 인터페이스의 모든 메서드는
+조인 포인트가 된다.
+- PointCut: Advice를 적용할 타겟의 메서드를 선별하는 정규표현식. execution으로 시작하고, 메서듸 Signature를 비교하는 방법을 주로 이용한다.
+- Aspect: AOP의 기본 모듈. 싱글톤 형태의 객체로 존재한다.
+- Adviser: Spring AOP에서만 사용되는 특별한 용어로, 애스팩트와 동일하다.
+- Weaving: 포인트컷에 의해서 결정된 타겟의 조인 포인트에 부가기능을 삽입하는 과정을 의미.
+
+### Spring AOP 특징
+1. 스프링은 프록시 기반 AOP를 지원한다.
+   - 타겟 객체에 대한 프록시를 만들어 제공한다.
+   - 타겟을 감싸는 프록시는 실행시간에 생성된다.
+   - 프록시는 어드바이스를 타겟 객체에 적용하면서 생성되는 객체이다.
+2. 프록시는 호출을 가로챈다.(Intercept)
+   - 프록시는 타겟 객체에 대한 호출을 가로챈 다음 어드바이스의 부가기능 로직을 수행하고 난 후에 타겟의 핵심기능 로직을 호출한다.(전처리 어드바이스)
+   - 또는 타겟의 핵심기능 로직 메서드를 호출한 후에 부가기능을 수행하는 경우도 있다.(후처리 어드바이)
+3. 스프링은 메서드 조인 포인트만 지원한다.
+   - 스프링은 동적 프록시를 기반으로 AOP를 구현하므로 메서드 조인 포인트만 지원한다. 즉 핵심기능의 메서드가 호출되는 런타임 시점에만 부가기능을 적용할 수 있다.
+   - 반면에 AspectJ 같은 고급 AOP 프레임워크를 사용하면 객체의 생성, 필드값의 조회와 조작, static 메서드 호출 및 초기화 등의 
+   다양한 작업에 부가기능을 적용할 수 있다.
+     
+### Spring AOP 구현 방식
+1. XML 기반의 POJO 클래스를 이용한 AOP 구현
+   - 부가기능을 제공하는 Advice 클래스를 작성한다.
+   - XML 설정 파일에 \<aop:config>를 이용해서 애스팩트를 설정한다.
+2. @Aspect 어노테이션을 이용한 AOP 구현
+   - @Aspect 어노테이션으로 부가기능을 제공하는 Aspect 클래스 작성.
+   - XML 설정 파일에 \<aop:aspectj-autoproxy/>를 설정한다.
+   
+### Advice의 종류
+
+1. Around Advice : 타겟의 메서드가 호출되기 이전 시점과 이후 시점에 모두 처리해야 할 필요가 있는 부가기능을 정의
+2. Before Advice : 타겟의 메서드가 실행되기 이전 시점에 처리해야 할 필요가 있는 부가기능을 정의
+3. After Returning Advice : 타겟의 메서드가 정상적으로 실행된 이후 시점에 처리해야 할 필요가 있는 부가기능을 정의
+4. After Throwing Advice : 타겟의 메서드가 예외를 발생된 이후 시점에 처리해야 할 필요가 있는 부가기능을 정의
+
+###  JoinPoint 인터페이스
+- JoinPoint는 AOP가 적용되는 지점을 뜻한다.
+- 해당 지점을 AspectJ에서 JoinPoint라는 인터페이스로 나타낸다.
+- JoinPoint methods
+   1. getArgs(): 메서드 argument 반환
+   2. getThis(): proxy object 반환
+   3. getTarget(): 대상 객체 반환
+   4. getSignature(): 메서드의 설명 반환
+   5. toString(): 메서드의 설명 출력
+- 모든 어드바이스는 org.aspectj.lang.JoinPoint 타입의 파라미터를 어드바이스 메서드에 첫 번째 매개변수로 선언할 수 있다.
+- Around 어드바이스는 JoinPoint의 하위 클래스인 ProceedingJoinPoint 타입의 파라미터를 필수적으로 선언해야 한다.
+
+### AOP 설정
+- \<aop:aspect> : 태그의 ref 속성은 애즈팩트로서 기능을 제공할 Bean을 설정
+- \<aop:around> : 태그의 pointcut 속성의 execution 지시자는 어드바이스를 적용할 패키지, 클래스, 메서드를 표현할 때 사용됨.
+
+### PointCut 표현식 문법
+```java
+execution([젭근제한자 패턴] 타입패턴 [타입패턴.] 이름패턴 (타입패턴 | "..", ...) [throws 예외패턴])
+```
+예시
+```java
+execution (* hello(..)); // 모든 종류의 파라미터를 가진 hello 메서드
+execution (* hello()); // hello 메서드중 파라미터 없는 것
+execution (* myspring.user.service.UserServiceImpl*(..)); // myspring.user.service.UserServiceImpl 클래스를 직접 지정하여 이 클래스가 가진 모든 메서드
+execution (* myspring.user.service.*.*(..)); // 패키지의 모든 클래스. 서브패키지의 클래스는 포함되지 않는다.
+execution (* myspring.user.service..*.*(..)); // 패키지의 모든 클래스. 서브패키지의 클래스도 포함된다.
+execution(* *..Target.*(..)) //패키지에 상관없이 Target이라는 이름의 모든 클래스에 적용된다.
+```
+

@@ -1,5 +1,6 @@
-package jdbc;
+package jdbc.dao;
 
+import jdbc.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

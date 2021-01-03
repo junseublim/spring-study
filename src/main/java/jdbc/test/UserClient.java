@@ -1,9 +1,7 @@
 package jdbc.test;
 
-import jdbc.UserService;
-import jdbc.UserVO;
-import org.junit.Assert;
-import org.junit.Ignore;
+import jdbc.service.UserService;
+import jdbc.vo.UserVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +35,15 @@ public class UserClient {
 
 
     @Test
-    public void getUserTest() {
+    public void getAllUserTest() {
 
         List<UserVO> user = service.getUserList();
         user.stream().forEach(userVO -> {System.out.println(userVO);});
+    }
+    @Test
+    public void getUserTest() {
+
+        UserVO user = service.getUser("TestUser3");
+        System.out.println(user);
     }
 }

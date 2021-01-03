@@ -2,8 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+        https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:property-placeholder location="value.properties"/>
 
@@ -42,7 +43,7 @@
     <bean id="printer" class="bean.StringPrinter"/>
     <bean id="consolePrinter" class="bean.ConsolePrinter"/>
 
-    <context:component-scan base-package="jdbc"/>
+    <context:component-scan base-package="jdbc, aop.annot"/>
     <!--DataSource 설정 -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="${db.driverClass}"/>
@@ -50,4 +51,12 @@
         <property name="username" value="${db.username}"/>
         <property name="password" value="${db.password}"/>
     </bean>
+
+    <aop:config>
+        <aop:aspect id="traceAspect" ref="performanceTraceAdvice">
+            <aop:around method="trace" pointcut="execution(public * jdbc.service..*(..))"/>
+        </aop:aspect>
+    </aop:config>
+    <aop:aspectj-autoproxy/>
+    <bean id="performanceTraceAdvice" class="aop.xml.PerformanceTraceAdvice"/>
 </beans>

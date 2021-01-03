@@ -1,5 +1,7 @@
-package jdbc;
+package jdbc.service;
 
+import jdbc.dao.UserDao;
+import jdbc.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

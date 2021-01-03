@@ -1,4 +1,6 @@
-package jdbc;
+package jdbc.service;
+
+import jdbc.vo.UserVO;
 
 import java.util.List;
 
