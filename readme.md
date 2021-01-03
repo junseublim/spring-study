@@ -144,3 +144,85 @@ XML의 Bean 설정 메타정보는 애플리케이션 구조가 바뀌지 않으
 - \<context:component-scan> 태그로 패키지 위치 설정.
 - \<context:include-filter> , \<context:exclude-filter> 태그를 같이 사용 시 자동 스캔 대상에
 포함시킬 클래스와 않을 클래스 구체적 명시 가능.
+  
+## JDBC
+
+### DAO 패턴
+데이터 액세스 계층은 DAO 패턴을 적용하여 비즈니스 로직과 데이터 액세스 로직을 분리하는 것이 원칙이다.
+이렇게 함으로써 서비스계층에 영향을 주지 않고 데이터 액세스 기술을 변경할 수 있는 장점을 가지고 있다. 
+
+### Connection Pooling
+미리 정해진 개수만큼의 DB Connection을 Pool에 준비 해두고 요청할 떄마다 꺼내서 하나씩 할당해주고 다시 돌려받아서 Pooldp
+넣는 식의 기법이다. 다중 사용자를 갖는 엔터프라이즈 시스템에서는 반드시 Connection pooling을 지원하는 DataSource를 사용해야 한다.
+
+### DataSource 구현 클래스 종류
+
+1. SimpleDriverDataSource : Spring이 제공하는 가장 단순한 DataSource 구현 클래스. 따로 pool을 관리하지 않으므로
+단순한 테스트용으로만 사용.
+2. SingleConnectionDriverDataSource: 순차적으로 진행되는 통합테스트에서는 사용 가능. 매번 DB 커넥션을 생성하지 않기 때문에
+SimpleDriverDataSource보다는 빠르게 동작.
+3. Apache Commons DBCP: 가장 유명한 오픈소스 DB 커넥션 Pool 라이브러리.
+4. c3p0 JDBC/DataSource Resource Pool: Connection과 Statement Pool을 제공하는 라이브러리.
+
+### JDBC란?
+모든 자바의 데이터 액세스 기술의 근간이 된다. ORM 기술도 내부적으로는 DB와의 연동을 위해 이용한다.
+안정적이고 유욘하지만 로우 레벨 기술로 인식된다.
+
+### Spring JDBC란?
+JDBC의 장점과 단순성을 유지하면서도 기존 JDBC의 단점을 극복할 수 있게 해주고, 간결한 형태의 API 사용법을
+제공하며, JDBC API에서 지원되지 않는 편리한 기능을 제공한다.
+- 반복적으로 해야하는 많은 작업들을 대신 해준다.
+- 실행할 SQL과 바인딩 할 파라미터만 넘겨주고 실행결과를 받을 객체만 지정하면 된다.
+- 먼저 DB 커넥션을 가져오는 DataSource를 Bean으로 등록해야 한다. 
+
+### Spring JDBC가 대신 해주는 작업
+1. Connection 열기와 닫기
+2. Statement 준비와 닫기
+3. Statement 실행
+4. ResultSet Loop 처리
+5. Exception 처리와 반환
+6. Transaction(커밋, 롤백) 처리
+
+### JdbcTemplate 클래스
+Spring JDBC가 제공하는 클래스 중 모든 기능을 최대한 활용할 수 있는 유연성을 제공하는 클래스이다. 
+JdbcTemplate이 제공하는 기능은 실행, 조회, 배치의 세가지 작업이다.
+- 실행: DB에 변경이 일어나는 작업
+- 조회: 데이터를 조회하는 작업
+- 배치: 여러 개의 쿼리를 한 번에 수행해야 하는 작업
+
+#### JdbcTemplate 클래스 생성
+JdbcTemplate은 DataSource를 파라미터로 받아서 아래와 같이 생성할 수 있다.
+```java
+JdbcTemplate template = new JdbcTemplate(dataSource);
+```
+- DataSource는 보통 빈으로 등록해서 사용하므로 DI 받아서 사용하면 된다.
+- JdbcTemplate은 멀티스레트 환경에서도 안전하게 공유해서 쓸 수 있기 때문에 DAO클래스의 인스턴스 변수에 저장해 두고 사용할 수 있다.
+
+#### JdbcTemplate의 update() 메서드
+```java
+int update(String sql, [SQL 파라미터])
+```
+- INSERT, UPDATE, DELETE와 같은 SQL을 실행할 때는 JdbcTemplate의 update() 사용
+- update() 메서드 호출할 때는 SQL과 함께 바인딩 할 파라미터는 Object타입 가변인자를 사용할 수 있다.
+- 리턴값은 영향받은 레코드의 개수.
+
+#### JdbcTemplate 클래스의 queryForObject() 메서드
+Select SQL을 실행하여 하나의 Row를 가져올 때는 JdbcTemplate의 queryForObject() 메서드를 사용.
+```java
+<T> T queryForObject(String sql, [SQL 파라미터], RowMapper<T> rm)
+```
+- SQL 실행 결과는 여러개의 칼럼을 가진 하나의 Row
+- T는 VO(value object) 객체의 타입에 해당된다.
+- SQL 실행 결과로 돌아온 여러 개의 column을 가진 한 개의 Row를 RowMapper 콜백을 이용해 VO 객체로 매핑해준다.
+- query와 다른점: 
+   1. queryForObject: 여러개의 칼럼, 한개의 Row를 반환
+   2. query: 여러개의 칼럼, 여러개의 Row
+
+#### JdbcTemplate 클래스의 query() 메서드
+Select SQL을 실행하여 여러개 Row를 가져올 때는 JdbcTemplate의 query() 메서드를 사용.
+```java
+<T> List<T> queryForObject(String sql, [SQL 파라미터], RowMapper<T> rm)
+```
+- SQL 실행 결과는 여러개의 칼럼을 가진 여러개의 Row
+- T는 VO(value object) 객체의 타입에 해당된다.
+- SQL 실행 결과로 돌아온 여러 개의 column을 가진 여 개의 Row를 RowMapper 콜백을 이용해 VO 객체로 매핑해준다.
