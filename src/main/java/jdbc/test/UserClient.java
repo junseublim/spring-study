@@ -1,7 +1,10 @@
 package jdbc.test;
 
+import jdbc.dao.UserDao;
 import jdbc.service.UserService;
 import jdbc.vo.UserVO;
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,22 @@ public class UserClient {
     UserService service;
 
     @Test
+    public void configTest() {
+        SqlSession session = context.getBean("sqlSession", SqlSession.class);
+        System.out.println(session.getClass().getName());
+
+        UserVO user = session.selectOne("userNS.selectUserByAccount", "TestUser3");
+        System.out.println(user);
+    }
+
+    @Test
+    public void daoTest() {
+        UserDao dao = context.getBean("userDao", UserDao.class);
+        UserVO userVO = dao.read("TestUser5");
+        System.out.println(userVO);
+    }
+
+    @Test @Ignore
     public void dataSourceTest() {
         DataSource ds = (DataSource) context.getBean("dataSource");
         try {
@@ -34,13 +53,13 @@ public class UserClient {
 
 
 
-    @Test
+    @Test @Ignore
     public void getAllUserTest() {
 
         List<UserVO> user = service.getUserList();
         user.stream().forEach(userVO -> {System.out.println(userVO);});
     }
-    @Test
+    @Test  @Ignore
     public void getUserTest() {
 
         UserVO user = service.getUser("TestUser3");

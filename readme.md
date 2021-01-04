@@ -311,3 +311,31 @@ execution (* myspring.user.service..*.*(..)); // 패키지의 모든 클래스. 
 execution(* *..Target.*(..)) //패키지에 상관없이 Target이라는 이름의 모든 클래스에 적용된다.
 ```
 
+## MyBatis
+
+### MyBatis 개요
+자바 오브젝트와 SQL문 사이의 자동 Mapping 기능을 지원하는 ORM 프레임워크이다.
+SQL을 별도의 파일로 분리해서 관리하게 해주며, 객체와 SQL 사이의 Mapping 작업을 자동으로 해준다.
+
+### MyBatis 특징
+1. 쉬운 접근성과 코드의 간결함
+    - JDBC의 모든 기능 제공
+    - 복잡한 JDBC의 코드를 깔끔하게 유지 가능
+2. SQL문과 프로그래밍 코드의 분리
+    - SQL에 변경이 있을 때마다 자바 코드를 수정하거나 컴파일 하지 않아도 된다.
+    - SQL 작성과 관리 또는 검토를 DBA와 같은 개발자가 아닌 다른사람에게 맡길 수 있다.
+3. 다양한 프로그래밍 언어로 구현 가능
+
+### MyBatis의 주요 컴포넌트
+
+1. MyBatis 설정 파일 (SqlMapConfig.xml) : 데이터 베이스의 접속 주소 정보나 Mapping 파일 경로 등의 환경정보 설정
+2. SqlSessionFactoryBuilder : MyBatis 설정 파일을 바탕으로 SqlSessionFactory을 생성
+3. SqlSessionFactory : SqlSession을 생성
+4. SqlSession : 핵심적인 역할을 하는 클래스로서 SQL 실행이나 트랜잭션 관리를 실행한다. SqlSession 오브젝트는 Thread-Safe 하지
+않으므로 필요에 따라 생성한다.
+5. Mapping 파일(user.xml) : SQL문과 OR Mapping을 설정한다.
+
+### MyBatis-Spring의 주요 컴포넌트
+1. MyBatis 설정파일 (sqlMapConfig.xml) : VO 객체의 정보를 설정한다.
+2. SqlSessionFactoryBean : MyBatis 설정파일을 바탕으로 SqlSessionFactory 생성
+3. SqlSessionTemplate : 핵심적인 역할을 하는 클래스로서 SQL 실행이나 트랜잭션 관리를 실행한다. Thread-safe 하다.

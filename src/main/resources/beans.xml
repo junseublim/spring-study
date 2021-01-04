@@ -59,4 +59,21 @@
     </aop:config>
     <aop:aspectj-autoproxy/>
     <bean id="performanceTraceAdvice" class="aop.xml.PerformanceTraceAdvice"/>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:SqlMapConfig.xml"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:User.xml</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+
+
+
+
 </beans>
