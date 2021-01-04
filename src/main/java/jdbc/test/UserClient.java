@@ -25,7 +25,8 @@ public class UserClient {
     @Autowired
     UserService service;
 
-    @Test
+
+    @Test @Ignore
     public void configTest() {
         SqlSession session = context.getBean("sqlSession", SqlSession.class);
         System.out.println(session.getClass().getName());

@@ -72,7 +72,15 @@
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactory"/>
     </bean>
+<!--    <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+<!--        <property name="mapperInterface" value="jdbc.dao.UserMap"/>-->
+<!--        <property name="sqlSessionTemplate" ref="sqlSession"/>-->
+<!--    </bean>-->
 
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="jdbc.dao"/>
+        <property name="annotationClass" value="jdbc.dao.MyMapper"/>
+    </bean>
 
 
 
