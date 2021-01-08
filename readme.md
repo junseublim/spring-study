@@ -400,4 +400,42 @@ MVC 패턴을 사용하면, 사용자 인터페이스로부터 비즈니스 로�
 3. Controller: 클라이언트의 요청을 처리한뒤, 모델을 호출하고 그 결과를 DispatherServlet에게 알려준다.
 4. ModelAndView : Controller가 처리한 데이터 및 화면에 대한 정보를 보유한 객체
 5. View : Controller의 처리 결과 화면에 대한 정보를 보유한 객체
-6. ViewResolver : Controller가 리턴한 뷰 이름을 기반으로 Controller 처리 결과를 생성할 뷰를 결
+6. ViewResolver : Controller가 리턴한 뷰 이름을 기반으로 Controller 처리 결과를 생성할 뷰를 결정 
+
+## RESTFUL API
+
+HTTP URI 를 통해 제어할 자원을 명시하고, HTTP Method를 통해 해당 자원을 제어하는 명령을 내리는 방식의 아키텍쳐
+Get, Post, Put, Delete 만을 사용하며, query string을 사용하지 않는다.
+
+### Jackson
+
+JSON 형태를 Java 객체로, Java 객체를 JSON 형태로 변환해주는 라이브러리이다.
+
+### Ajax
+
+웹 사용자들에게 수준 높은 인터페이스를 제공할 수 있도록 도움을 주는 기술의 묶음이다. 
+비동기적이므로 서버로부터 데이터가 로드되는 동안에도 계속해서 페이지를 사용할 수 있다는 뜻이다.
+
+### JQuery
+
+Javascript를 좀 더 쉽게 사용하도록 만들어진 라이브러리이며, 가볍고 빠르다.
+적은 코딩량과 동일한 코드로 일반 javascript로 하는 Ajax 코딩보다 쉽게 같은 동작을 할 수 있다.
+
+#### 특징
+
+1. 크로스 브라우저 지원
+2. 강력한 css 셀렉터
+3. 메서드 체이닝
+4. Ajax 지원
+5. 풍부한 PlugIn 지원
+
+#### JQuery 기능
+
+1. HTML Element 선택
+2. HTML Element의 attribute 값 읽기, 쓰기
+3. HTML 엘리먼트 동적으로 조작
+4. Loop
+5. CSS 조작
+6. Event 처리
+7. Ajax 처리
+
